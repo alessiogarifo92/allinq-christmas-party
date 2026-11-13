@@ -5,6 +5,7 @@
   "scripts": {
     "build": "bash build.sh",
     "test": "bash build.sh && node --test test.mjs",
-    "deploy": "bash build.sh && bash deploy.sh"
+    "deploy": "bash build.sh && bash deploy.sh",
+    "verify": "bash build.sh && node --test test.mjs"
   }
 }

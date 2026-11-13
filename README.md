@@ -32,4 +32,8 @@ npm test        # build + unit tests (validation, tally, escaping, routes agains
 CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... npm run deploy
 ```
 
+## Automatic deploy
+
+`.github/workflows/deploy.yml` runs `npm test` on every push and pull request, and on a push to `main` that passes it deploys with `deploy.sh`. It needs two repository secrets (Settings → Secrets and variables → Actions): `CLOUDFLARE_API_TOKEN` (a token with *Cloudflare Pages: Edit*) and `CLOUDFLARE_ACCOUNT_ID`. Without them the deploy step is skipped with a warning. Changes that only touch Markdown or `.claude/` don't trigger it.
+
 KV listings are eventually consistent, so a new answer can take about a minute to appear on the results page.
