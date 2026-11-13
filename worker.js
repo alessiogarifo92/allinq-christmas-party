@@ -1,5 +1,5 @@
 import PAGE from "./page.js";
-import { validateRsvp, tallyDays, safeEqual } from "./lib.js";
+import { validateRsvp, tallyDays, safeEqual, EVENTS } from "./lib.js";
 import { renderResults } from "./results.js";
 
 const SEC_HEADERS = { "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer" };
@@ -47,7 +47,8 @@ export default {
     if (pathname === "/api/results" && request.method === "GET") {
       if (!isAdmin()) return json({ ok: false, error: "Missing or wrong key." }, 403);
       const records = await allRecords(env);
-      return json({ ok: true, records, ...tallyDays(records) });
+      const events = Object.fromEntries(EVENTS.map(({ key }) => [key, tallyDays(records, key).ranking.map(({ day, yes, no }) => ({ day, yes, no }))]));
+      return json({ ok: true, records, ranking: events });
     }
 
     if (pathname === "/results/delete" && request.method === "POST") {

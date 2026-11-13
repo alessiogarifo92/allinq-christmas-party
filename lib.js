@@ -3,8 +3,12 @@
 
 export const YEAR = 2026;
 export const DAYS_IN_MONTH = 31;
-export const HOLIDAYS = { 8: "Holiday", 24: "Christmas Eve", 25: "Christmas Day", 26: "Boxing Day", 31: "New Year's Eve" };
+export const HOLIDAYS = { 24: "Christmas Eve", 25: "Christmas Day", 26: "Boxing Day", 31: "New Year's Eve" };
 export const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+export const EVENTS = [
+  { key: "dinner", label: "Christmas Dinner" },
+  { key: "santa", label: "Office Secret Santa" },
+];
 
 // 0 = Monday ... 6 = Sunday, for a day of December YEAR.
 export function weekdayIndex(day) {
@@ -23,6 +27,18 @@ function normDays(list) {
   return [...out].sort((a, b) => a - b);
 }
 
+// One event's answer: { attending: true, available: [...], unavailable: [...] }.
+function validateEvent(ev, label) {
+  if (!ev || typeof ev !== "object" || Array.isArray(ev)) return { error: `Missing answer for the ${label}.` };
+  if (ev.attending !== true) return { error: `The only accepted answer for the ${label} is yes.` };
+  const available = normDays(ev.available);
+  const unavailable = normDays(ev.unavailable);
+  if (available === null || unavailable === null) return { error: `Those ${label} dates aren't valid.` };
+  if (available.some((d) => unavailable.includes(d))) return { error: `A ${label} day can't be both free and busy.` };
+  if (available.length === 0) return { error: `Mark at least one day you can make the ${label}.` };
+  return { value: { available, unavailable } };
+}
+
 export function validateRsvp(body) {
   const fail = (error) => ({ ok: false, error });
   if (!body || typeof body !== "object" || Array.isArray(body)) return fail("Invalid request.");
@@ -34,29 +50,39 @@ export function validateRsvp(body) {
   if (!name) return fail("Please tell us your name.");
   if (name.length > 60) return fail("That name is too long (60 characters max).");
 
-  if (body.attending !== true) return fail("The only accepted answer is yes.");
-
-  const available = normDays(body.available);
-  const unavailable = normDays(body.unavailable);
-  if (available === null || unavailable === null) return fail("Those dates aren't valid.");
-  if (available.some((d) => unavailable.includes(d))) return fail("A day can't be both free and busy.");
-  if (available.length === 0) return fail("Mark at least one day you can make it.");
+  const value = { id, name, v: 2 };
+  for (const { key, label } of EVENTS) {
+    const r = validateEvent(body[key], label);
+    if (r.error) return fail(r.error);
+    value[key] = r.value;
+  }
 
   let note = body.note == null ? "" : body.note;
   if (typeof note !== "string") return fail("Invalid request.");
   note = note.trim();
   if (note.length > 300) return fail("That note is too long (300 characters max).");
+  value.note = note;
 
-  return { ok: true, value: { id, name, attending: true, available, unavailable, note } };
+  return { ok: true, value };
 }
 
-// Per-day counts plus a ranking: most people available first, then fewest unavailable, then earliest.
-export function tallyDays(records) {
+// Answers saved before the two-event form have top-level available/unavailable lists:
+// they count for both events and are flagged as legacy.
+export function normalizeRecord(r) {
+  if (r && r.dinner && r.santa) return { ...r, legacy: false };
+  const days = { available: (r && r.available) || [], unavailable: (r && r.unavailable) || [] };
+  return { ...r, dinner: days, santa: days, legacy: true };
+}
+
+// Per-day counts for one event plus a ranking: most people available, then fewest unavailable, then earliest.
+export function tallyDays(records, eventKey) {
   const days = [];
   for (let day = 1; day <= DAYS_IN_MONTH; day++) days.push({ day, yes: [], no: [] });
-  for (const r of records) {
-    for (const d of r.available || []) if (days[d - 1]) days[d - 1].yes.push(r.name);
-    for (const d of r.unavailable || []) if (days[d - 1]) days[d - 1].no.push(r.name);
+  for (const raw of records) {
+    const r = normalizeRecord(raw);
+    const ev = r[eventKey] || {};
+    for (const d of ev.available || []) if (days[d - 1]) days[d - 1].yes.push(r.name);
+    for (const d of ev.unavailable || []) if (days[d - 1]) days[d - 1].no.push(r.name);
   }
   const ranking = days
     .filter((d) => d.yes.length > 0)

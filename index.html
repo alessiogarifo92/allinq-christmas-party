@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Allinq Christmas Party</title>
-<meta name="description" content="You're invited to the Allinq Christmas Party! Tell us which December days work for you.">
+<meta name="description" content="You're invited to the Allinq Christmas Dinner and the office Secret Santa! Tell us which December days work for you.">
 <meta property="og:title" content="Allinq Christmas Party 🎄">
-<meta property="og:description" content="You're invited! Say yes and pick the December days that work for you.">
+<meta property="og:description" content="A proper Christmas dinner and an office Secret Santa. Say yes and pick your days.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: a gift-wrapped card under a string of lights; step 1 is the yes/no, step 2 an advent-calendar date picker. */
+/* Layout: a gift-wrapped card under a string of lights; four steps: dinner yes/no, dinner dates, Secret Santa yes/no, Secret Santa dates. */
 :root {
   --night: #0b2219;
   --pine: #14402f;
@@ -26,6 +26,7 @@
   --green-dark: #146236;
   --green-soft: #dcf3e4;
   --gold: #f2c14e;
+  --gold-soft: #fff4d6;
   --script: "Mountains of Christmas", "Comic Sans MS", cursive;
   --round: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
   --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -44,13 +45,12 @@ body {
   color: var(--paper);
   font: 16px/1.5 var(--body);
   padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) max(48px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-  overflow-x: hidden;
 }
 #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-.wrap { position: relative; z-index: 1; max-width: 580px; margin: 0 auto; display: grid; gap: 22px; }
+.wrap { position: relative; z-index: 1; max-width: 580px; margin: 0 auto; display: grid; gap: 20px; }
 
 /* String of lights */
-.lights { position: relative; height: 54px; overflow: hidden; display: flex; justify-content: space-around; align-items: flex-start; }
+.lights { position: relative; height: 50px; overflow: hidden; display: flex; justify-content: space-around; align-items: flex-start; }
 .lights::before { content: ""; position: absolute; left: 0; right: 0; top: -36px; height: 60px; border-bottom: 2px solid #2b3b31; border-radius: 0 0 50% 50% / 0 0 100% 100%; }
 .bulb { position: relative; width: 13px; height: 21px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; margin-top: calc(14px + var(--dy, 0px)); background: var(--c); box-shadow: 0 0 14px 3px var(--c); animation: twinkle 1.6s ease-in-out infinite; animation-delay: var(--d); }
 .bulb::before { content: ""; position: absolute; top: -6px; left: 3px; width: 7px; height: 7px; border-radius: 2px; background: #3a4a40; }
@@ -59,39 +59,50 @@ body {
 /* Hero */
 .hero { display: flex; align-items: flex-end; gap: 10px; }
 .hero-text { flex: 1; min-width: 0; display: grid; gap: 6px; }
-.eyebrow { font: 600 14px/1 var(--round); letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
-h1 { font-family: var(--script); font-weight: 700; font-size: clamp(46px, 13vw, 78px); line-height: .92; margin: 0; text-wrap: balance; text-shadow: 0 3px 0 var(--red-dark), 0 6px 24px rgba(0,0,0,.4); }
+.eyebrow { font: 600 14px/1.2 var(--round); letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
+h1 { font-family: var(--script); font-weight: 700; font-size: clamp(42px, 12vw, 78px); line-height: .92; margin: 0; text-wrap: balance; text-shadow: 0 3px 0 var(--red-dark), 0 6px 24px rgba(0,0,0,.4); }
 h1 .brand { color: var(--gold); display: block; font-size: .8em; }
-.tree { width: clamp(84px, 24vw, 130px); flex: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,.35)); }
+.tree { width: clamp(76px, 22vw, 130px); flex: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,.35)); }
 .tree .orn { animation: twinkle 2.2s ease-in-out infinite; }
 .tree .orn:nth-child(2n) { animation-delay: .7s; }
 .tree .orn:nth-child(3n) { animation-delay: 1.3s; }
-.lede { margin: 0; font-size: 18px; color: #dbe9df; max-width: 32em; }
+.lede { margin: 0; font-size: 17px; color: #dbe9df; max-width: 34em; }
+.lede b { color: #fff; }
+body.past-intro .lede { display: none; }
 
 /* Gift-wrapped card */
 .gift { position: relative; padding: 9px; border-radius: 28px; background: repeating-linear-gradient(-45deg, var(--red) 0 14px, #fff 14px 28px); box-shadow: 0 30px 60px -28px rgba(0,0,0,.7); }
+.gift.green { background: repeating-linear-gradient(-45deg, var(--green) 0 14px, #fff 14px 28px); }
 .gift::before { content: ""; position: absolute; left: 50%; top: -18px; width: 64px; height: 34px; transform: translateX(-50%); background:
-  radial-gradient(ellipse 15px 11px at 14px 17px, var(--gold) 98%, transparent) ,
+  radial-gradient(ellipse 15px 11px at 14px 17px, var(--gold) 98%, transparent),
   radial-gradient(ellipse 15px 11px at 50px 17px, var(--gold) 98%, transparent),
   radial-gradient(circle 8px at 32px 17px, #d9a531 98%, transparent); z-index: 2; }
-.card { background: var(--paper); color: var(--ink); border-radius: 20px; padding: 30px 22px 26px; display: grid; gap: 24px; }
-.step-tag { justify-self: start; font: 600 13px/1 var(--round); letter-spacing: .08em; text-transform: uppercase; color: var(--green-dark); background: var(--green-soft); padding: 7px 12px; border-radius: 999px; }
-.big-q { font: 700 clamp(28px, 7vw, 36px)/1.1 var(--round); margin: 0; text-align: center; text-wrap: balance; }
-.sub-q { margin: -12px 0 0; text-align: center; color: var(--muted); }
+.card { background: var(--paper); color: var(--ink); border-radius: 20px; padding: 28px 22px 24px; display: grid; gap: 20px; }
+.card-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.step-tag { font: 600 13px/1 var(--round); letter-spacing: .08em; text-transform: uppercase; color: var(--green-dark); background: var(--green-soft); padding: 7px 12px; border-radius: 999px; }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--red); }
+.event-head { display: grid; gap: 6px; text-align: center; justify-items: center; }
+.event-icon { font-size: 44px; line-height: 1; }
+.event-name { font: 700 16px/1 var(--round); letter-spacing: .1em; text-transform: uppercase; color: var(--red); }
+.big-q { font: 700 clamp(26px, 7vw, 34px)/1.1 var(--round); margin: 0; text-align: center; text-wrap: balance; }
+.event-desc { margin: 0; text-align: center; color: var(--muted); max-width: 30em; }
+.dress { display: inline-flex; align-items: center; gap: 6px; font: 600 14px/1.2 var(--round); color: #6b4e00; background: var(--gold-soft); border: 1.5px dashed var(--gold); border-radius: 12px; padding: 7px 12px; }
 
 /* Yes / No arena */
-.arena { position: relative; height: 190px; border-radius: 18px; background: radial-gradient(circle at 20% 30%, #fff 0 2px, transparent 3px) 0 0 / 28px 28px, var(--green-soft); overflow: hidden; touch-action: manipulation; }
+.arena { position: relative; height: 170px; border-radius: 18px; background: radial-gradient(circle at 20% 30%, #fff 0 2px, transparent 3px) 0 0 / 28px 28px, var(--green-soft); overflow: hidden; touch-action: manipulation; }
 .btn-yes, .btn-no { position: absolute; top: 50%; font: 700 20px/1 var(--round); border-radius: 999px; cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-.btn-yes { left: 16px; padding: 20px 30px; transform: translateY(-50%) scale(var(--grow, 1)); transform-origin: left center; background: var(--green); color: #fff; border: 0; box-shadow: 0 5px 0 var(--green-dark); transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
+.btn-yes { left: 16px; padding: 20px 28px; transform: translateY(-50%) scale(var(--grow, 1)); transform-origin: left center; background: var(--green); color: #fff; border: 0; box-shadow: 0 5px 0 var(--green-dark); transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
 .btn-yes:hover { transform: translateY(-50%) scale(calc(var(--grow, 1) * 1.04)); }
 .btn-yes:active { box-shadow: 0 2px 0 var(--green-dark); }
-.btn-no { left: 74%; padding: 14px 24px; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)); background: #fff; color: var(--red); border: 2px dashed var(--red); font-size: 17px; transition: left .3s cubic-bezier(.2,.9,.3,1.3), top .3s cubic-bezier(.2,.9,.3,1.3), transform .3s; }
-.taunt { min-height: 1.5em; margin: -8px 0 0; text-align: center; color: var(--red); font: 600 16px/1.4 var(--round); }
+.btn-no { left: 76%; padding: 14px 24px; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)); background: #fff; color: var(--red); border: 2px dashed var(--red); font-size: 17px; transition: left .3s cubic-bezier(.2,.9,.3,1.3), top .3s cubic-bezier(.2,.9,.3,1.3), transform .3s; }
+.taunt { min-height: 1.5em; margin: -6px 0 0; text-align: center; color: var(--red); font: 600 16px/1.4 var(--round); }
 
-/* Step 2 */
+/* Date steps */
 .back { justify-self: start; font: 600 14px/1 var(--round); color: var(--muted); background: none; border: 0; padding: 4px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .q { display: grid; gap: 10px; }
-.q-title { font: 700 21px/1.25 var(--round); margin: 0; text-wrap: balance; }
+.q-title { font: 700 20px/1.25 var(--round); margin: 0; text-wrap: balance; }
 .q-help { margin: -4px 0 0; color: var(--muted); font-size: 14.5px; }
 .req { color: var(--red); }
 input[type=text], textarea { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 2px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 16px; }
@@ -125,18 +136,21 @@ input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 3px
 .quick { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .link-btn { font: 600 14px/1 var(--round); background: none; border: 0; color: var(--green-dark); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 6px 0; }
 
-.submit { font: 700 21px/1 var(--round); width: 100%; padding: 19px; border-radius: 16px; border: 0; background: var(--red); color: #fff; cursor: pointer; box-shadow: 0 5px 0 var(--red-dark); }
-.submit:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--red-dark); }
-.submit:disabled { opacity: .6; cursor: progress; }
+.primary { font: 700 21px/1 var(--round); width: 100%; padding: 19px; border-radius: 16px; border: 0; background: var(--red); color: #fff; cursor: pointer; box-shadow: 0 5px 0 var(--red-dark); }
+.primary.go { background: var(--green); box-shadow: 0 5px 0 var(--green-dark); }
+.primary:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--red-dark); }
+.primary:disabled { opacity: .6; cursor: progress; }
 .error { margin: 0; color: var(--red); font-weight: 600; min-height: 1.4em; text-align: center; }
 
 /* Thanks */
 .thanks-emoji { font-size: 56px; line-height: 1; text-align: center; }
 .thanks-title { font: 700 clamp(30px, 8vw, 40px)/1.05 var(--script); color: var(--red); margin: 0; text-align: center; }
 .thanks-text { margin: -8px 0 0; color: var(--muted); text-align: center; }
-.summary { display: grid; gap: 10px; font-size: 15px; }
-.summary b { font-family: var(--round); }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.summary { display: grid; gap: 14px; font-size: 15px; }
+.sum-event { display: grid; gap: 6px; padding: 12px 14px; border-radius: 14px; background: #f7f4ec; }
+.sum-event h3 { margin: 0; font: 700 17px/1.2 var(--round); }
+.sum-event b { font: 600 14px/1.2 var(--round); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: 600 13px/1 var(--round); padding: 6px 10px; border-radius: 999px; }
 .chip.y { background: var(--green-soft); color: var(--green-dark); }
 .chip.n { background: var(--red-soft); color: var(--red-dark); }
@@ -147,11 +161,26 @@ footer { text-align: center; color: #9fbcab; font-size: 13px; }
 @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.97); } }
 
 @media (max-width: 420px) {
-  .card { padding: 28px 14px 22px; }
+  .wrap { gap: 14px; }
+  .lights { height: 36px; }
+  .bulb { width: 11px; height: 17px; margin-top: calc(10px + var(--dy, 0px) * .6); }
+  .eyebrow { font-size: 11.5px; letter-spacing: .12em; }
+  h1 { font-size: 40px; }
+  h1 .brand { font-size: .78em; }
+  .tree { width: 60px; }
+  .lede { font-size: 15px; line-height: 1.45; }
+  .card { padding: 22px 14px 18px; gap: 14px; }
+  .event-head { gap: 4px; }
+  .event-icon { display: none; }
+  .event-name { font-size: 13px; }
+  .big-q { font-size: 25px; }
+  .event-desc { font-size: 14.5px; line-height: 1.4; }
+  .dress { font-size: 13px; padding: 6px 10px; }
   .cal { gap: 4px; }
   .day { font-size: 15px; border-radius: 8px; }
   .day small { font-size: 7.5px; }
-  .btn-yes { padding: 18px 24px; font-size: 18px; }
+  .btn-yes { padding: 17px 20px; font-size: 18px; }
+  .arena { height: 136px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .bulb, .tree .orn, .step { animation: none; }
@@ -188,57 +217,91 @@ footer { text-align: center; color: #9fbcab; font-size: 13px; }
       </g>
     </svg>
   </header>
-  <p class="lede">Panettone, mulled wine, terrible jumpers and a round of Secret Santa. The only thing missing is the date.</p>
+  <p class="lede">Two things to save the date for: <b>a proper Christmas dinner</b> and <b>the office Secret Santa</b>, with snacks, drinks and terrible jumpers. Help us pick the days.</p>
 
-  <!-- Step 1: the question -->
-  <div class="gift step" id="step1">
+  <!-- Step 1: dinner yes/no -->
+  <div class="gift step" id="s1">
     <section class="card">
-      <span class="step-tag">Step 1 of 2</span>
-      <h2 class="big-q" id="q-attend">Are you coming to the party?</h2>
-      <p class="sub-q">Think carefully. Or don't, there's only one right answer.</p>
-      <div class="arena" id="arena" role="group" aria-labelledby="q-attend">
-        <button type="button" class="btn-yes" id="yes">Yes, I'm in! 🎉</button>
-        <button type="button" class="btn-no" id="no" tabindex="-1">No</button>
+      <div class="card-top"><span class="step-tag">Step 1 of 4</span><span class="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span></div>
+      <div class="event-head">
+        <div class="event-icon" aria-hidden="true">🍽️</div>
+        <div class="event-name">The Christmas Dinner</div>
+        <h2 class="big-q" id="q-dinner">Are you coming to the Christmas dinner?</h2>
+        <p class="event-desc">A proper sit-down dinner, all of us together, a few toasts and nobody talking about work. Promise.</p>
+        <span class="dress">👔 Dress code: smart. Yes, a real shirt.</span>
       </div>
-      <p class="taunt" id="taunt" aria-live="polite"></p>
+      <div class="arena" id="arena-dinner" role="group" aria-labelledby="q-dinner">
+        <button type="button" class="btn-yes">Yes, I'm in! 🥂</button>
+        <button type="button" class="btn-no" tabindex="-1">No</button>
+      </div>
+      <p class="taunt" aria-live="polite"></p>
     </section>
   </div>
 
-  <!-- Step 2: dates -->
-  <form class="gift step" id="step2" novalidate hidden>
-    <div class="card">
-      <button type="button" class="back" id="back">← Back</button>
-      <span class="step-tag">Step 2 of 2</span>
-      <h2 class="big-q">Yay! Now help pick the date</h2>
+  <!-- Step 2: name + dinner dates -->
+  <div class="gift step" id="s2" hidden>
+    <section class="card">
+      <button type="button" class="back" data-go="s1">← Back</button>
+      <div class="card-top"><span class="step-tag">Step 2 of 4</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+      <h2 class="big-q">🍽️ When can you do the dinner?</h2>
 
       <section class="q">
         <h3 class="q-title"><label for="name">What's your name? <span class="req">*</span></label></h3>
-        <input type="text" id="name" name="name" maxlength="60" autocomplete="name" placeholder="First name, surname if you like">
+        <input type="text" id="name" maxlength="60" autocomplete="name" placeholder="First name, surname if you like">
       </section>
 
       <section class="q">
-        <h3 class="q-title">Which December days work for you, and which don't? <span class="req">*</span></h3>
+        <h3 class="q-title">Which December evenings work for the dinner, and which don't? <span class="req">*</span></h3>
         <p class="q-help">Choose what you're marking, then tap the days. Tap a day again to clear it.</p>
-        <div class="modes" role="group" aria-label="What you're marking">
-          <button type="button" class="mode" data-mode="yes" aria-pressed="true">★ I can make it</button>
-          <button type="button" class="mode" data-mode="no" aria-pressed="false">✕ Can't make it</button>
-        </div>
-        <div class="cal-title"><b>December 2026</b><span id="counts">0 yes · 0 no</span></div>
-        <div class="cal" id="cal"></div>
-        <div class="quick">
-          <button type="button" class="link-btn" id="weekends">Mark every weekend as free</button>
-          <button type="button" class="link-btn" id="clear">Clear all</button>
-        </div>
+        <div class="date-picker" id="dp-dinner"></div>
+      </section>
+
+      <p class="error" role="alert"></p>
+      <button type="button" class="primary go" id="next-dinner">Next: one more question →</button>
+    </section>
+  </div>
+
+  <!-- Step 3: Secret Santa yes/no -->
+  <div class="gift green step" id="s3" hidden>
+    <section class="card">
+      <button type="button" class="back" data-go="s2">← Back</button>
+      <div class="card-top"><span class="step-tag">Step 3 of 4</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+      <div class="event-head">
+        <div class="event-icon" aria-hidden="true">🎁</div>
+        <div class="event-name">The Office Secret Santa</div>
+        <h2 class="big-q" id="q-santa">Are you in for the Secret Santa?</h2>
+        <p class="event-desc">At the office: a gift exchange, snacks, drinks and a winner for the ugliest jumper.</p>
+        <span class="dress">🧶 Dress code: the ugliest Christmas jumper you own.</span>
+      </div>
+      <div class="arena" id="arena-santa" role="group" aria-labelledby="q-santa">
+        <button type="button" class="btn-yes">Count me in! 🎅</button>
+        <button type="button" class="btn-no" tabindex="-1">No</button>
+      </div>
+      <p class="taunt" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <!-- Step 4: Secret Santa dates + note -->
+  <form class="gift green step" id="s4" novalidate hidden>
+    <section class="card">
+      <button type="button" class="back" data-go="s3">← Back</button>
+      <div class="card-top"><span class="step-tag">Step 4 of 4</span><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+      <h2 class="big-q">🎁 When can you do the Secret Santa?</h2>
+
+      <section class="q">
+        <h3 class="q-title">Which December days work for the Secret Santa, and which don't? <span class="req">*</span></h3>
+        <p class="q-help">Choose what you're marking, then tap the days. Tap a day again to clear it.</p>
+        <div class="date-picker" id="dp-santa"></div>
       </section>
 
       <section class="q">
         <h3 class="q-title"><label for="note">Anything else?</label></h3>
-        <textarea id="note" name="note" maxlength="300" placeholder="E.g. “Evenings only”, “Bringing a plus-one”, “I'm vegetarian”"></textarea>
+        <textarea id="note" maxlength="300" placeholder="E.g. “Evenings only”, “I'm vegetarian”, “My jumper lights up”"></textarea>
       </section>
 
-      <p class="error" id="error" role="alert"></p>
-      <button type="submit" class="submit" id="submit">Send my answer 🎁</button>
-    </div>
+      <p class="error" role="alert"></p>
+      <button type="submit" class="primary" id="submit">Send my answers 🎄</button>
+    </section>
   </form>
 
   <!-- Thanks -->
@@ -246,9 +309,9 @@ footer { text-align: center; color: #9fbcab; font-size: 13px; }
     <section class="card">
       <div class="thanks-emoji" aria-hidden="true">🎅</div>
       <h2 class="thanks-title" id="thanks-title">Thank you!</h2>
-      <p class="thanks-text">Got it. As soon as the date is set, you'll hear from us.</p>
+      <p class="thanks-text">Got it. As soon as the dates are set, you'll hear from us.</p>
       <div class="summary" id="summary"></div>
-      <button type="button" class="secondary" id="edit">Change my answer</button>
+      <button type="button" class="secondary" id="edit">Change my answers</button>
     </section>
   </div>
 
@@ -259,188 +322,250 @@ footer { text-align: center; color: #9fbcab; font-size: 13px; }
 (function () {
   "use strict";
   var YEAR = 2026;
-  var HOLIDAYS = { 8: "Holiday", 24: "Xmas Eve", 25: "Christmas", 26: "Boxing Day", 31: "NYE" };
+  var HOLIDAYS = { 24: "Xmas Eve", 25: "Christmas", 26: "Boxing Day", 31: "NYE" };
   var DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  var STORE = "allinq-xmas-2026";
+  var STORE = "allinq-xmas-2026-v2";
+  var LEGACY_STORE = "allinq-xmas-2026";
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function (id) { return document.getElementById(id); };
 
   function wd(day) { return (new Date(Date.UTC(YEAR, 11, day)).getUTCDay() + 6) % 7; }
-  function load() { try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { return null; } }
-  function save(v) { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch (e) {} }
+  function load(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
+  function save(v) { try { localStorage.setItem(STORE, JSON.stringify(v)); localStorage.removeItem(LEGACY_STORE); } catch (e) {} }
   function newId() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
     return "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
   }
-  var $ = function (id) { return document.getElementById(id); };
 
-  var saved = load();
-  var state = { id: (saved && saved.id) || newId(), attending: false, days: {}, mode: "yes" };
+  // A guest who answered the first, single-event form keeps their id (so their answer is
+  // updated, not duplicated) and gets those days pre-filled for both events.
+  var saved = load(STORE);
+  var legacy = saved ? null : load(LEGACY_STORE);
+  var state = { id: (saved && saved.id) || (legacy && legacy.id) || newId(), dinner: false, santa: false };
 
   /* ---------- Lights ---------- */
   var COLORS = ["#ff4d5e", "#f2c14e", "#3ddc84", "#4db8ff", "#ff9f43"];
   var lights = $("lights"), nb = Math.max(9, Math.min(22, Math.round(window.innerWidth / 36)));
   for (var i = 0; i < nb; i++) {
     var bl = document.createElement("span"); bl.className = "bulb";
-    var t = i / (nb - 1); var sag = Math.sin(t * Math.PI) * 14;
     bl.style.setProperty("--c", COLORS[i % COLORS.length]);
     bl.style.setProperty("--d", (i % 4) * 0.4 + "s");
-    bl.style.setProperty("--dy", sag.toFixed(1) + "px");
+    bl.style.setProperty("--dy", (Math.sin(i / (nb - 1) * Math.PI) * 14).toFixed(1) + "px");
     lights.appendChild(bl);
   }
 
   /* ---------- Steps ---------- */
+  var STEPS = ["s1", "s2", "s3", "s4", "thanks"];
   function show(which) {
-    ["step1", "step2", "thanks"].forEach(function (id) { $(id).hidden = id !== which; });
+    STEPS.forEach(function (id) { $(id).hidden = id !== which; });
+    document.body.classList.toggle("past-intro", which !== "s1");
     window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   }
+  document.querySelectorAll("[data-go]").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.go); }); });
 
   /* ---------- Yes / runaway No ---------- */
-  var arena = $("arena"), yes = $("yes"), no = $("no"), taunt = $("taunt");
-  var tries = 0;
-  var TAUNTS = [
+  function setupArena(arena, taunts, onYes) {
+    var yes = arena.querySelector(".btn-yes"), no = arena.querySelector(".btn-no");
+    var taunt = arena.parentNode.querySelector(".taunt");
+    var tries = 0, lastFlee = 0;
+    yes.addEventListener("click", function () {
+      taunt.textContent = tries ? "Knew it! 🎄" : "";
+      var r = yes.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2);
+      setTimeout(onYes, reduce ? 0 : 650);
+    });
+    function flee(px, py) {
+      var a = arena.getBoundingClientRect(), w = no.offsetWidth, h = no.offsetHeight, yr = yes.getBoundingClientRect();
+      var best = null, bestScore = -1;
+      for (var i = 0; i < 28; i++) {
+        var cx = w / 2 + 8 + Math.random() * Math.max(1, a.width - w - 16);
+        var cy = h / 2 + 8 + Math.random() * Math.max(1, a.height - h - 16);
+        var ax = a.left + cx, ay = a.top + cy;
+        if (ax + w / 2 > yr.left - 12 && ax - w / 2 < yr.right + 12 && ay + h / 2 > yr.top - 12 && ay - h / 2 < yr.bottom + 12) continue;
+        var dist = px == null ? Math.random() * 100 : Math.hypot(ax - px, ay - py);
+        if (dist > bestScore) { bestScore = dist; best = [cx, cy]; }
+      }
+      if (!best) best = [a.width - w / 2 - 8, h / 2 + 8];
+      no.style.left = (best[0] / a.width * 100) + "%";
+      no.style.top = (best[1] / a.height * 100) + "%";
+      no.style.setProperty("--rot", (Math.random() * 30 - 15).toFixed(0) + "deg");
+      tries++;
+      taunt.textContent = taunts[Math.min(tries - 1, taunts.length - 1)];
+      yes.style.setProperty("--grow", String(Math.min(1 + tries * 0.07, 1.5)));
+    }
+    function fleeOnce(px, py) { var now = Date.now(); if (now - lastFlee < 180) return; lastFlee = now; flee(px, py); }
+    arena.addEventListener("pointermove", function (e) {
+      if (e.pointerType !== "mouse") return;
+      var r = no.getBoundingClientRect();
+      var dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right), dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+      if (Math.hypot(dx, dy) < 36) fleeOnce(e.clientX, e.clientY);
+    });
+    no.addEventListener("pointerdown", function (e) { e.preventDefault(); fleeOnce(e.clientX, e.clientY); });
+    no.addEventListener("touchstart", function (e) { e.preventDefault(); var t = e.touches[0]; fleeOnce(t && t.clientX, t && t.clientY); }, { passive: false });
+    no.addEventListener("click", function (e) { e.preventDefault(); flee(null, null); });
+  }
+  setupArena($("arena-dinner"), [
     "Nope.",
     "The No button is shy.",
     "Nice try.",
     "No is on holiday until January.",
     "The Yes button is right there. Waiting.",
-    "There will be panettone. Give up.",
+    "There will be food. Lots of it. Give up.",
     "The more you try, the bigger Yes gets.",
     "Santa is watching you. 🎅",
     "This button is purely decorative."
-  ];
-  yes.addEventListener("click", function () {
-    state.attending = true;
-    taunt.textContent = tries ? "Knew it! 🎄" : "";
-    var r = yes.getBoundingClientRect();
-    burst(r.left + r.width / 2, r.top + r.height / 2);
-    setTimeout(function () { show("step2"); setTimeout(function () { $("name").focus({ preventScroll: true }); }, 350); }, reduce ? 0 : 650);
-  });
+  ], function () { state.dinner = true; show("s2"); setTimeout(function () { $("name").focus({ preventScroll: true }); }, 350); });
+  setupArena($("arena-santa"), [
+    "Absolutely not.",
+    "Secret Santa knows where you sit.",
+    "Snacks. Drinks. Think about it.",
+    "Your ugly jumper deserves an audience.",
+    "Still no. The No button quit.",
+    "Someone already bought you a gift. Awkward.",
+    "Resistance is futile. Jingle bells.",
+    "Just press the big green one."
+  ], function () { state.santa = true; show("s4"); });
 
-  function flee(px, py) {
-    var a = arena.getBoundingClientRect();
-    var w = no.offsetWidth, h = no.offsetHeight;
-    var yr = yes.getBoundingClientRect();
-    var best = null, bestScore = -1;
-    for (var i = 0; i < 28; i++) {
-      var cx = w / 2 + 8 + Math.random() * Math.max(1, a.width - w - 16);
-      var cy = h / 2 + 8 + Math.random() * Math.max(1, a.height - h - 16);
-      var ax = a.left + cx, ay = a.top + cy;
-      if (ax + w / 2 > yr.left - 12 && ax - w / 2 < yr.right + 12 && ay + h / 2 > yr.top - 12 && ay - h / 2 < yr.bottom + 12) continue;
-      var dist = px == null ? Math.random() * 100 : Math.hypot(ax - px, ay - py);
-      if (dist > bestScore) { bestScore = dist; best = [cx, cy]; }
+  /* ---------- Date pickers ---------- */
+  function makePicker(root) {
+    var picker = { days: {}, mode: "yes", cells: {} };
+    root.innerHTML =
+      '<div class="modes" role="group" aria-label="What you\'re marking">' +
+      '<button type="button" class="mode" data-mode="yes" aria-pressed="true">★ I can make it</button>' +
+      '<button type="button" class="mode" data-mode="no" aria-pressed="false">✕ Can\'t make it</button></div>' +
+      '<div class="cal-title"><b>December 2026</b><span class="counts">0 yes · 0 no</span></div>' +
+      '<div class="cal"></div>' +
+      '<div class="quick"><button type="button" class="link-btn" data-act="weekends">Mark every weekend as free</button>' +
+      '<button type="button" class="link-btn" data-act="clear">Clear all</button></div>';
+    root.style.display = "grid"; root.style.gap = "10px";
+    var cal = root.querySelector(".cal"), counts = root.querySelector(".counts");
+    DOW.forEach(function (d) { var el = document.createElement("div"); el.className = "dow"; el.textContent = d; cal.appendChild(el); });
+    for (var b = 0; b < wd(1); b++) cal.appendChild(document.createElement("div"));
+    for (var day = 1; day <= 31; day++) {
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "day" + (HOLIDAYS[day] ? " special" : ""); btn.dataset.day = day;
+      btn.appendChild(document.createTextNode(String(day)));
+      if (HOLIDAYS[day]) { var s = document.createElement("small"); s.textContent = HOLIDAYS[day]; btn.appendChild(s); }
+      cal.appendChild(btn); picker.cells[day] = btn;
     }
-    if (!best) best = [a.width - w / 2 - 8, h / 2 + 8];
-    no.style.left = (best[0] / a.width * 100) + "%";
-    no.style.top = (best[1] / a.height * 100) + "%";
-    no.style.setProperty("--rot", (Math.random() * 30 - 15).toFixed(0) + "deg");
-    tries++;
-    taunt.textContent = TAUNTS[Math.min(tries - 1, TAUNTS.length - 1)];
-    yes.style.setProperty("--grow", String(Math.min(1 + tries * 0.07, 1.5)));
-  }
-  var lastFlee = 0;
-  function fleeOnce(px, py) { var now = Date.now(); if (now - lastFlee < 180) return; lastFlee = now; flee(px, py); }
-  arena.addEventListener("pointermove", function (e) {
-    if (e.pointerType !== "mouse") return;
-    var r = no.getBoundingClientRect();
-    var dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
-    var dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
-    if (Math.hypot(dx, dy) < 36) fleeOnce(e.clientX, e.clientY);
-  });
-  no.addEventListener("pointerdown", function (e) { e.preventDefault(); fleeOnce(e.clientX, e.clientY); });
-  no.addEventListener("touchstart", function (e) { e.preventDefault(); var t = e.touches[0]; fleeOnce(t && t.clientX, t && t.clientY); }, { passive: false });
-  no.addEventListener("click", function (e) { e.preventDefault(); flee(null, null); });
-
-  /* ---------- Calendar ---------- */
-  var cal = $("cal");
-  DOW.forEach(function (d) { var el = document.createElement("div"); el.className = "dow"; el.textContent = d; cal.appendChild(el); });
-  for (var b = 0; b < wd(1); b++) cal.appendChild(document.createElement("div"));
-  var cells = {};
-  for (var day = 1; day <= 31; day++) {
-    var btn = document.createElement("button");
-    btn.type = "button"; btn.className = "day" + (HOLIDAYS[day] ? " special" : ""); btn.dataset.day = day;
-    btn.appendChild(document.createTextNode(String(day)));
-    if (HOLIDAYS[day]) { var s = document.createElement("small"); s.textContent = HOLIDAYS[day]; btn.appendChild(s); }
-    cal.appendChild(btn); cells[day] = btn;
-  }
-  function paint() {
-    var y = 0, n = 0;
-    for (var d = 1; d <= 31; d++) {
-      var st = state.days[d] || "";
-      cells[d].dataset.state = st;
-      cells[d].setAttribute("aria-label", DOW[wd(d)] + " " + d + " December" + (HOLIDAYS[d] ? ", " + HOLIDAYS[d] : "") + (st === "yes" ? ": I can make it" : st === "no" ? ": can't make it" : ""));
-      if (st === "yes") y++; else if (st === "no") n++;
-    }
-    $("counts").textContent = y + " yes · " + n + " no";
-  }
-  cal.addEventListener("click", function (e) {
-    var t = e.target.closest(".day"); if (!t) return;
-    var d = +t.dataset.day;
-    if (state.days[d] === state.mode) delete state.days[d]; else state.days[d] = state.mode;
-    paint(); clearError();
-  });
-  document.querySelectorAll(".mode").forEach(function (m) {
-    m.addEventListener("click", function () {
-      state.mode = m.dataset.mode;
-      document.querySelectorAll(".mode").forEach(function (o) { o.setAttribute("aria-pressed", String(o === m)); });
+    picker.paint = function () {
+      var y = 0, n = 0;
+      for (var d = 1; d <= 31; d++) {
+        var st = picker.days[d] || "";
+        picker.cells[d].dataset.state = st;
+        picker.cells[d].setAttribute("aria-label", DOW[wd(d)] + " " + d + " December" + (HOLIDAYS[d] ? ", " + HOLIDAYS[d] : "") + (st === "yes" ? ": I can make it" : st === "no" ? ": can't make it" : ""));
+        if (st === "yes") y++; else if (st === "no") n++;
+      }
+      counts.textContent = y + " yes · " + n + " no";
+    };
+    picker.set = function (available, unavailable) {
+      picker.days = {};
+      (available || []).forEach(function (d) { picker.days[d] = "yes"; });
+      (unavailable || []).forEach(function (d) { picker.days[d] = "no"; });
+      picker.paint();
+    };
+    picker.lists = function () {
+      var av = [], un = [];
+      for (var d = 1; d <= 31; d++) { if (picker.days[d] === "yes") av.push(d); else if (picker.days[d] === "no") un.push(d); }
+      return { available: av, unavailable: un };
+    };
+    cal.addEventListener("click", function (e) {
+      var t = e.target.closest(".day"); if (!t) return;
+      var d = +t.dataset.day;
+      if (picker.days[d] === picker.mode) delete picker.days[d]; else picker.days[d] = picker.mode;
+      picker.paint(); clearErrors();
     });
-  });
-  $("weekends").addEventListener("click", function () {
-    for (var d = 1; d <= 31; d++) if (wd(d) >= 5 && state.days[d] !== "no") state.days[d] = "yes";
-    paint(); clearError();
-  });
-  $("clear").addEventListener("click", function () { state.days = {}; paint(); });
-  $("back").addEventListener("click", function () { show("step1"); });
-
-  /* ---------- Submit ---------- */
-  var form = $("step2"), errorEl = $("error"), submitBtn = $("submit");
-  function showError(m) { errorEl.textContent = m; }
-  function clearError() { errorEl.textContent = ""; }
-  function collect() {
-    var av = [], un = [];
-    for (var d = 1; d <= 31; d++) { if (state.days[d] === "yes") av.push(d); else if (state.days[d] === "no") un.push(d); }
-    return { id: state.id, name: $("name").value.trim(), attending: state.attending, available: av, unavailable: un, note: $("note").value.trim() };
+    root.querySelectorAll(".mode").forEach(function (m) {
+      m.addEventListener("click", function () {
+        picker.mode = m.dataset.mode;
+        root.querySelectorAll(".mode").forEach(function (o) { o.setAttribute("aria-pressed", String(o === m)); });
+      });
+    });
+    root.querySelector('[data-act="weekends"]').addEventListener("click", function () {
+      for (var d = 1; d <= 31; d++) if (wd(d) >= 5 && picker.days[d] !== "no") picker.days[d] = "yes";
+      picker.paint(); clearErrors();
+    });
+    root.querySelector('[data-act="clear"]').addEventListener("click", function () { picker.days = {}; picker.paint(); });
+    picker.paint();
+    return picker;
   }
+  var dinnerPicker = makePicker($("dp-dinner"));
+  var santaPicker = makePicker($("dp-santa"));
+  // Shortcut on the Secret Santa calendar: start from the dinner answers.
+  var copy = document.createElement("button");
+  copy.type = "button"; copy.className = "link-btn"; copy.textContent = "Same days as the dinner";
+  copy.addEventListener("click", function () { var l = dinnerPicker.lists(); santaPicker.set(l.available, l.unavailable); clearErrors(); });
+  $("dp-santa").querySelector(".quick").prepend(copy);
+
+  /* ---------- Errors / navigation ---------- */
+  function clearErrors() { document.querySelectorAll(".error").forEach(function (e) { e.textContent = ""; }); }
+  function errorIn(step, msg) { $(step).querySelector(".error").textContent = msg; }
+
+  $("next-dinner").addEventListener("click", function () {
+    if (!$("name").value.trim()) { errorIn("s2", "Please tell us your name."); $("name").focus(); return; }
+    if (!dinnerPicker.lists().available.length) { errorIn("s2", "Mark at least one evening you can make it."); return; }
+    clearErrors();
+    show(state.santa ? "s4" : "s3");
+  });
+
+  var form = $("s4"), submitBtn = $("submit");
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var p = collect();
-    if (!p.attending) { show("step1"); return; }
-    if (!p.name) { showError("Please tell us your name."); $("name").focus(); return; }
-    if (!p.available.length) { showError("Mark at least one day you can make it."); return; }
-    submitBtn.disabled = true; submitBtn.textContent = "Sending…"; clearError();
+    var name = $("name").value.trim();
+    var dinner = dinnerPicker.lists(), santa = santaPicker.lists();
+    if (!state.dinner) { show("s1"); return; }
+    if (!name || !dinner.available.length) { show("s2"); return; }
+    if (!state.santa) { show("s3"); return; }
+    if (!santa.available.length) { errorIn("s4", "Mark at least one day you can make it."); return; }
+    var p = {
+      id: state.id, name: name, note: $("note").value.trim(),
+      dinner: { attending: true, available: dinner.available, unavailable: dinner.unavailable },
+      santa: { attending: true, available: santa.available, unavailable: santa.unavailable }
+    };
+    submitBtn.disabled = true; submitBtn.textContent = "Sending…"; clearErrors();
     fetch("/api/rsvp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(p) })
       .then(function (r) { return r.json().catch(function () { return { ok: false, error: "Unexpected response from the server." }; }); })
       .then(function (res) {
-        if (!res.ok) throw new Error(res.error || "Couldn't send your answer.");
+        if (!res.ok) throw new Error(res.error || "Couldn't send your answers.");
         save(p); showThanks(p);
         burst(window.innerWidth / 2, window.innerHeight / 3);
       })
-      .catch(function (err) { showError((err && err.message) || "Couldn't send your answer. Check your connection and try again."); })
-      .then(function () { submitBtn.disabled = false; submitBtn.textContent = "Send my answer 🎁"; });
+      .catch(function (err) { errorIn("s4", (err && err.message) || "Couldn't send your answers. Check your connection and try again."); })
+      .then(function () { submitBtn.disabled = false; submitBtn.textContent = "Send my answers 🎄"; });
   });
 
   function chip(cls, d) { var c = document.createElement("span"); c.className = "chip " + cls; c.textContent = DOW[wd(d)] + " " + d; return c; }
-  function row(label, cls, list) {
-    var r = document.createElement("div"); var b = document.createElement("b"); b.textContent = label; r.appendChild(b);
-    var c = document.createElement("div"); c.className = "chips"; list.forEach(function (d) { c.appendChild(chip(cls, d)); }); r.appendChild(c); return r;
+  function eventSummary(title, ev) {
+    var box = document.createElement("div"); box.className = "sum-event";
+    var h = document.createElement("h3"); h.textContent = title; box.appendChild(h);
+    [["You can make it", "y", ev.available], ["You can't", "n", ev.unavailable]].forEach(function (row) {
+      if (!row[2].length) return;
+      var b = document.createElement("b"); b.textContent = row[0]; box.appendChild(b);
+      var c = document.createElement("div"); c.className = "chips"; row[2].forEach(function (d) { c.appendChild(chip(row[1], d)); }); box.appendChild(c);
+    });
+    return box;
   }
   function showThanks(p) {
     $("thanks-title").textContent = "See you there, " + p.name.split(" ")[0] + "!";
     var s = $("summary"); s.textContent = "";
-    s.appendChild(row("You can make it:", "y", p.available));
-    if (p.unavailable.length) s.appendChild(row("You can't make it:", "n", p.unavailable));
+    s.appendChild(eventSummary("🍽️ Christmas Dinner", p.dinner));
+    s.appendChild(eventSummary("🎁 Office Secret Santa", p.santa));
     show("thanks");
   }
-  $("edit").addEventListener("click", function () { show("step2"); });
+  $("edit").addEventListener("click", function () { show("s2"); });
 
-  if (saved && saved.name) {
+  if (saved && saved.name && saved.dinner && saved.santa) {
     $("name").value = saved.name;
     $("note").value = saved.note || "";
-    (saved.available || []).forEach(function (d) { state.days[d] = "yes"; });
-    (saved.unavailable || []).forEach(function (d) { state.days[d] = "no"; });
-    state.attending = true;
-    paint(); showThanks(saved);
-  } else {
-    paint();
+    dinnerPicker.set(saved.dinner.available, saved.dinner.unavailable);
+    santaPicker.set(saved.santa.available, saved.santa.unavailable);
+    state.dinner = state.santa = true;
+    showThanks(saved);
+  } else if (legacy && legacy.name) {
+    $("name").value = legacy.name;
+    $("note").value = legacy.note || "";
+    dinnerPicker.set(legacy.available, legacy.unavailable);
+    santaPicker.set(legacy.available, legacy.unavailable);
   }
 
   /* ---------- Snow + confetti ---------- */
