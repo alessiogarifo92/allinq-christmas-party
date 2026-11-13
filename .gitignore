@@ -1,0 +1,5 @@
+page.js
+dist/
+.admin_key
+node_modules/
+*.png
